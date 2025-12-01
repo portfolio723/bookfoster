@@ -7,6 +7,7 @@ import {
   User as UserIcon,
   Heart,
   ShoppingCart,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -57,6 +58,9 @@ export function Header() {
             </Link>
             <Link href="/chat" className="transition-colors hover:text-primary">
               Messages
+            </Link>
+             <Link href="/community" className="transition-colors hover:text-primary">
+              Community
             </Link>
           </nav>
 
@@ -110,6 +114,12 @@ export function Header() {
                     <Link href="/account">
                       <UserIcon className="mr-2 h-4 w-4" />
                       <span>Account</span>
+                    </Link>
+                  </DropdownMenuItem>
+                   <DropdownMenuItem asChild>
+                    <Link href="/community">
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Community</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={signOut}>
