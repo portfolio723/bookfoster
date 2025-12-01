@@ -44,8 +44,8 @@ const messages = {
 };
 
 const SidebarContent = ({ activeChannel, onChannelSelect }: { activeChannel: string; onChannelSelect: (id: string) => void }) => (
-    <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground">
-        <div className="p-4 border-b border-sidebar-border">
+    <div className="flex flex-col h-full bg-card">
+        <div className="p-4 border-b">
             <h2 className="text-xl font-bold font-headline flex items-center gap-2"><Users /> Community Hub</h2>
         </div>
         <ScrollArea className="flex-1">
@@ -67,12 +67,12 @@ const SidebarContent = ({ activeChannel, onChannelSelect }: { activeChannel: str
                     ))}
                     </nav>
                 </div>
-                <Separator className="bg-sidebar-border"/>
+                <Separator />
                 <div>
                     <h3 className="text-sm font-semibold text-muted-foreground px-2 mb-2">Online — {onlineUsers.length}</h3>
                      <nav className="space-y-2">
                         {onlineUsers.map((user) => (
-                            <div key={user.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-sidebar-accent cursor-pointer">
+                            <div key={user.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
                                 <Avatar className="h-8 w-8">
                                     <AvatarImage src={user.avatar} data-ai-hint={user.hint} className="object-cover" />
                                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -100,18 +100,18 @@ export default function CommunityPage() {
     }
 
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <Header />
-      <div className="grid md:grid-cols-[280px_1fr] h-[calc(100vh-4rem)] bg-background text-foreground">
+      <div className="grid md:grid-cols-[280px_1fr] flex-1 bg-background text-foreground overflow-hidden">
           {/* Mobile Sidebar */}
           <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-              <SheetContent side="left" className="p-0 w-80 bg-sidebar border-r-0">
+              <SheetContent side="left" className="p-0 w-80 bg-card border-r-0">
                   <SidebarContent activeChannel={activeChannel} onChannelSelect={(id) => { setActiveChannel(id); setIsSidebarOpen(false); }} />
               </SheetContent>
           </Sheet>
 
           {/* Desktop Sidebar */}
-          <aside className="hidden md:block border-r">
+          <aside className="hidden md:block border-r bg-card">
               <SidebarContent activeChannel={activeChannel} onChannelSelect={setActiveChannel} />
           </aside>
 
@@ -173,6 +173,8 @@ export default function CommunityPage() {
               </footer>
           </main>
       </div>
-    </>
+    </div>
   );
 }
+
+    
