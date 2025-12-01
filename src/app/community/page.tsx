@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { Header } from '@/components/layout/header';
 
 const channels = [
   { id: '1', name: 'general', unread: 2 },
@@ -43,8 +44,8 @@ const messages = {
 };
 
 const SidebarContent = ({ activeChannel, onChannelSelect }: { activeChannel: string; onChannelSelect: (id: string) => void }) => (
-    <div className="flex flex-col h-full">
-        <div className="p-4 border-b">
+    <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground">
+        <div className="p-4 border-b border-sidebar-border">
             <h2 className="text-xl font-bold font-headline flex items-center gap-2"><Users /> Community Hub</h2>
         </div>
         <ScrollArea className="flex-1">
@@ -66,14 +67,14 @@ const SidebarContent = ({ activeChannel, onChannelSelect }: { activeChannel: str
                     ))}
                     </nav>
                 </div>
-                <Separator />
+                <Separator className="bg-sidebar-border"/>
                 <div>
                     <h3 className="text-sm font-semibold text-muted-foreground px-2 mb-2">Online — {onlineUsers.length}</h3>
                      <nav className="space-y-2">
                         {onlineUsers.map((user) => (
-                            <div key={user.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                            <div key={user.id} className="flex items-center gap-2 p-2 rounded-md hover:bg-sidebar-accent cursor-pointer">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={user.avatar} data-ai-hint={user.hint} />
+                                    <AvatarImage src={user.avatar} data-ai-hint={user.hint} className="object-cover" />
                                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <span className="font-medium text-sm truncate">{user.name}</span>
@@ -99,76 +100,79 @@ export default function CommunityPage() {
     }
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
-        {/* Mobile Sidebar */}
-        <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-            <SheetContent side="left" className="p-0 w-80">
-                <SidebarContent activeChannel={activeChannel} onChannelSelect={(id) => { setActiveChannel(id); setIsSidebarOpen(false); }} />
-            </SheetContent>
-        </Sheet>
+    <>
+      <Header />
+      <div className="grid md:grid-cols-[280px_1fr] h-[calc(100vh-4rem)] bg-background text-foreground">
+          {/* Mobile Sidebar */}
+          <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+              <SheetContent side="left" className="p-0 w-80 bg-sidebar border-r-0">
+                  <SidebarContent activeChannel={activeChannel} onChannelSelect={(id) => { setActiveChannel(id); setIsSidebarOpen(false); }} />
+              </SheetContent>
+          </Sheet>
 
-        {/* Desktop Sidebar */}
-        <aside className="hidden md:flex md:w-80 md:flex-col md:border-r">
-            <SidebarContent activeChannel={activeChannel} onChannelSelect={setActiveChannel} />
-        </aside>
+          {/* Desktop Sidebar */}
+          <aside className="hidden md:block border-r">
+              <SidebarContent activeChannel={activeChannel} onChannelSelect={setActiveChannel} />
+          </aside>
 
-        {/* Main Chat Area */}
-        <main className="flex flex-1 flex-col">
-            <header className="flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6 shrink-0">
-                <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSidebarOpen(true)}>
-                    <Menu className="h-5 w-5" />
-                    <span className="sr-only">Open channels</span>
-                </Button>
-                <div className="flex-1">
-                    <h2 className="text-lg font-semibold flex items-center gap-2">
-                        <Hash className="h-5 w-5 text-muted-foreground" />
-                        {currentChannel?.name}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">Discuss all things books and connect with fellow readers.</p>
-                </div>
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input placeholder="Search channel..." className="pl-10 w-48 md:w-64" />
-                </div>
-            </header>
+          {/* Main Chat Area */}
+          <main className="flex flex-1 flex-col">
+              <header className="flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6 shrink-0">
+                  <Button variant="ghost" size="icon" className="md:hidden -ml-2" onClick={() => setIsSidebarOpen(true)}>
+                      <Menu className="h-5 w-5" />
+                      <span className="sr-only">Open channels</span>
+                  </Button>
+                  <div className="flex-1">
+                      <h2 className="text-lg font-semibold flex items-center gap-2">
+                          <Hash className="h-5 w-5 text-muted-foreground" />
+                          {currentChannel?.name}
+                      </h2>
+                      <p className="text-sm text-muted-foreground truncate">Discuss all things books and connect with fellow readers.</p>
+                  </div>
+                  <div className="relative hidden sm:block">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input placeholder="Search channel..." className="pl-10 w-48 md:w-64" />
+                  </div>
+              </header>
 
-            <div className="flex-1 overflow-hidden">
-                <ScrollArea className="h-full">
-                    <div className="p-4 md:p-6 space-y-4">
-                        {currentMessages.map((msg, index) => {
-                            const user = getUser(msg.userId);
-                            return (
-                                <div key={index} className="flex items-start gap-4">
-                                    <Avatar>
-                                        <AvatarImage src={user?.avatar} data-ai-hint={user?.hint} />
-                                        <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex-1">
-                                        <div className="flex items-baseline gap-2">
-                                            <p className="font-semibold">{user?.name}</p>
-                                            <p className="text-xs text-muted-foreground">{msg.time}</p>
-                                        </div>
-                                        <div className={cn("prose prose-sm max-w-none text-foreground", msg.text.includes('@') && "has-mention")}>
-                                            <p dangerouslySetInnerHTML={{ __html: msg.text.replace(/(@\w+)/, '<span class="bg-primary/10 text-primary font-semibold p-1 rounded-md">$&</span>')}}></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                         })}
-                    </div>
-                </ScrollArea>
-            </div>
-            
-            <footer className="border-t bg-background px-4 py-3 sm:px-6">
-                <div className="relative">
-                    <Input placeholder={`Message #${currentChannel?.name}`} className="pr-12" />
-                    <Button type="submit" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8">
-                        <Send className="h-4 w-4" />
-                        <span className="sr-only">Send</span>
-                    </Button>
-                </div>
-            </footer>
-        </main>
-    </div>
+              <div className="flex-1 overflow-hidden">
+                  <ScrollArea className="h-full">
+                      <div className="p-4 md:p-6 space-y-4">
+                          {currentMessages.map((msg, index) => {
+                              const user = getUser(msg.userId);
+                              return (
+                                  <div key={index} className="flex items-start gap-4">
+                                      <Avatar>
+                                          <AvatarImage src={user?.avatar} data-ai-hint={user?.hint} className="object-cover"/>
+                                          <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+                                      </Avatar>
+                                      <div className="flex-1">
+                                          <div className="flex items-baseline gap-2">
+                                              <p className="font-semibold">{user?.name}</p>
+                                              <p className="text-xs text-muted-foreground">{msg.time}</p>
+                                          </div>
+                                          <div className={cn("prose prose-sm max-w-none text-foreground", msg.text.includes('@') && "has-mention")}>
+                                              <p dangerouslySetInnerHTML={{ __html: msg.text.replace(/(@\w+)/g, '<span class="bg-primary/10 text-primary font-semibold py-0.5 px-1 rounded-sm">$&</span>')}}></p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              );
+                          })}
+                      </div>
+                  </ScrollArea>
+              </div>
+              
+              <footer className="border-t bg-background px-4 py-3 sm:px-6">
+                  <div className="relative">
+                      <Input placeholder={`Message #${currentChannel?.name}`} className="pr-12" />
+                      <Button type="submit" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8">
+                          <Send className="h-4 w-4" />
+                          <span className="sr-only">Send</span>
+                      </Button>
+                  </div>
+              </footer>
+          </main>
+      </div>
+    </>
   );
 }

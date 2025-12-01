@@ -6,8 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 
 const conversations = [
   {
@@ -53,31 +51,34 @@ const conversations = [
 
 export default function ChatsDashboardPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-muted/5">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-8">
-            <div className="max-w-4xl mx-auto">
-                <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                    <h1 className="text-3xl font-bold font-headline">Chats</h1>
-                    <div className="flex items-center gap-2">
-                         <div className="relative flex-grow sm:flex-grow-0">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                            <Input placeholder="Search chats..." className="pl-10" />
-                        </div>
-                        <Button variant="outline" size="icon">
-                            <Filter className="h-5 w-5" />
-                            <span className="sr-only">Filter chats</span>
-                        </Button>
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="sticky top-0 z-10 bg-background border-b">
+        <div className="container mx-auto px-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4">
+                <h1 className="text-2xl font-bold font-headline">Chats</h1>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                     <div className="relative flex-grow">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input placeholder="Search chats..." className="pl-10" />
                     </div>
-                </header>
-
-                {conversations.length > 0 ? (
-                    <div className="border rounded-lg overflow-hidden">
-                        <div className="divide-y">
-                            {conversations.map((convo) => (
-                                <Link key={convo.id} href={`/chat/${convo.id}`} className="flex items-start gap-4 p-4 hover:bg-muted/50 transition-colors cursor-pointer">
-                                    <Avatar className="h-14 w-14 border-2 border-transparent">
-                                        <AvatarImage src={convo.userImage} alt={convo.userName} data-ai-hint={convo.userImageHint} />
+                    <Button variant="outline" size="icon">
+                        <Filter className="h-5 w-5" />
+                        <span className="sr-only">Filter chats</span>
+                    </Button>
+                </div>
+            </div>
+        </div>
+      </header>
+      <main className="flex-1 container mx-auto px-4 py-4 sm:py-6">
+        <div className="max-w-4xl mx-auto">
+            {conversations.length > 0 ? (
+                <div className="border rounded-lg overflow-hidden bg-card">
+                    <div className="divide-y">
+                        {conversations.map((convo) => (
+                            <Link key={convo.id} href={`/chat/${convo.id}`} className="block hover:bg-muted/50 transition-colors">
+                                <div className="flex items-center gap-4 p-4">
+                                    <Avatar className="h-12 w-12">
+                                        <AvatarImage src={convo.userImage} alt={convo.userName} data-ai-hint={convo.userImageHint} className="object-cover" />
                                         <AvatarFallback>{convo.userName.charAt(0)}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 grid gap-1">
@@ -88,7 +89,7 @@ export default function ChatsDashboardPage() {
                                         <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
                                         <div className="mt-1 flex items-center justify-between">
                                           <div className="flex items-center gap-2">
-                                              <img src={convo.bookImage} alt={convo.bookTitle} className="h-6 w-6 rounded-sm object-cover" data-ai-hint={convo.bookImageHint} />
+                                              <img src={convo.bookImage} alt={convo.bookTitle} className="h-8 w-8 rounded-sm object-cover" data-ai-hint={convo.bookImageHint} />
                                               <Badge variant={convo.type === 'Donation' ? 'secondary' : 'default'} className={convo.type === 'Donation' ? '' : 'bg-primary/10 text-primary border-primary/20'}>{convo.type}</Badge>
                                           </div>
                                            {convo.unreadCount > 0 && (
@@ -96,25 +97,25 @@ export default function ChatsDashboardPage() {
                                            )}
                                         </div>
                                     </div>
-                                </Link>
-                            ))}
-                        </div>
+                                </div>
+                            </Link>
+                        ))}
                     </div>
-                ) : (
-                <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-lg">
-                    <div className="text-5xl">📭</div>
-                    <h2 className="mt-4 text-xl font-semibold">No conversations yet.</h2>
-                    <p className="mt-1 text-muted-foreground">
-                    Start by exploring books and messaging a seller or donor.
-                    </p>
-                    <Button asChild className="mt-6">
-                        <Link href="/">Browse Books</Link>
-                    </Button>
                 </div>
-                )}
+            ) : (
+            <div className="flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-lg h-full">
+                <div className="text-5xl">📭</div>
+                <h2 className="mt-4 text-xl font-semibold">No conversations yet.</h2>
+                <p className="mt-1 text-muted-foreground">
+                Start by exploring books and messaging a seller or donor.
+                </p>
+                <Button asChild className="mt-6">
+                    <Link href="/">Browse Books</Link>
+                </Button>
             </div>
-        </main>
-      <Footer />
+            )}
+        </div>
+      </main>
     </div>
   );
 }
