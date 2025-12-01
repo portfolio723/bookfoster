@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's public profile.",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "The URL of the user's profile picture."
+        }
+      }
+    },
+    "cartItem": {
+      "title": "Cart Item",
+      "description": "Represents a book in a user's shopping cart.",
+      "type": "object",
+      "properties": {
+        "bookId": {
+          "type": "string",
+          "description": "The ID of the book."
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Number of copies of the book."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["buy", "rent"],
+          "description": "Whether the book is for buy or rent."
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the item was added."
+        }
+      },
+      "required": ["bookId", "quantity", "type", "addedAt"]
+    },
+    "wishlistItem": {
+      "title": "Wishlist Item",
+      "description": "Represents a book in a user's wishlist.",
+      "type": "object",
+      "properties": {
+        "bookId": {
+          "type": "string",
+          "description": "The ID of the book."
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the item was added."
+        }
+      },
+      "required": ["bookId", "addedAt"]
+    }
+  },
+  "auth": {
+    "providers": ["anonymous", "google.com", "password"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/userProfile"
+      },
+      "description": "Stores public information about a user."
+    },
+    "/users/{userId}/cart/{cartItemId}": {
+      "schema": {
+        "$ref": "#/entities/cartItem"
+      },
+      "description": "Stores items in a user's shopping cart."
+    },
+    "/users/{userId}/wishlist/{wishlistItemId}": {
+      "schema": {
+        "$ref": "#/entities/wishlistItem"
+      },
+      "description": "Stores items in a user's wishlist."
+    }
+  }
+}
