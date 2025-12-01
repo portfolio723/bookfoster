@@ -70,29 +70,27 @@ export default function ChatsDashboardPage() {
         {conversations.length > 0 ? (
             <div className="divide-y">
                 {conversations.map((convo) => (
-                    <Link key={convo.id} href={`/chat/${convo.id}`} legacyBehavior>
-                        <a className="flex items-start gap-4 p-4 hover:bg-background transition-colors cursor-pointer">
-                            <Avatar className="h-12 w-12 border-2 border-transparent">
-                                <AvatarImage src={convo.userImage} alt={convo.userName} data-ai-hint={convo.userImageHint} />
-                                <AvatarFallback>{convo.userName.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 overflow-hidden">
-                                <div className="flex justify-between items-start">
-                                    <p className="font-semibold truncate">{convo.userName}</p>
-                                    <span className="text-xs text-muted-foreground whitespace-nowrap">{convo.timestamp}</span>
-                                </div>
-                                <div className="flex justify-between items-start gap-2">
-                                     <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
-                                     {convo.unreadCount > 0 && (
-                                        <Badge variant="destructive" className="h-5 w-5 justify-center p-0">{convo.unreadCount}</Badge>
-                                     )}
-                                </div>
-                                <div className="mt-2 flex items-center gap-2">
-                                    <img src={convo.bookImage} alt={convo.bookTitle} className="h-8 w-8 rounded-sm object-cover" data-ai-hint={convo.bookImageHint} />
-                                    <Badge variant={convo.type === 'Donation' ? 'secondary' : 'default'} className={convo.type === 'Donation' ? '' : 'bg-primary/10 text-primary border-primary/20'}>{convo.type}</Badge>
-                                </div>
+                    <Link key={convo.id} href={`/chat/${convo.id}`} className="flex items-start gap-4 p-4 hover:bg-background transition-colors cursor-pointer">
+                        <Avatar className="h-12 w-12 border-2 border-transparent">
+                            <AvatarImage src={convo.userImage} alt={convo.userName} data-ai-hint={convo.userImageHint} />
+                            <AvatarFallback>{convo.userName.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 overflow-hidden">
+                            <div className="flex justify-between items-start">
+                                <p className="font-semibold truncate">{convo.userName}</p>
+                                <span className="text-xs text-muted-foreground whitespace-nowrap">{convo.timestamp}</span>
                             </div>
-                        </a>
+                            <div className="flex justify-between items-start gap-2">
+                                 <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
+                                 {convo.unreadCount > 0 && (
+                                    <Badge variant="destructive" className="h-5 w-5 justify-center p-0">{convo.unreadCount}</Badge>
+                                 )}
+                            </div>
+                            <div className="mt-2 flex items-center gap-2">
+                                <img src={convo.bookImage} alt={convo.bookTitle} className="h-8 w-8 rounded-sm object-cover" data-ai-hint={convo.bookImageHint} />
+                                <Badge variant={convo.type === 'Donation' ? 'secondary' : 'default'} className={convo.type === 'Donation' ? '' : 'bg-primary/10 text-primary border-primary/20'}>{convo.type}</Badge>
+                            </div>
+                        </div>
                     </Link>
                 ))}
             </div>
