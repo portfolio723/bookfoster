@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { books } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
@@ -23,14 +23,16 @@ import { useCart } from '@/hooks/use-cart';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 
-export default function BookDetailPage({ params }: { params: { id: string } }) {
+export default function BookDetailPage() {
+  const params = useParams();
   const [purchaseType, setPurchaseType] = useState<'buy' | 'rent'>('buy');
   const { user } = useUser();
   const { toast } = useToast();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist(user?.uid);
   const { addToCart } = useCart(user?.uid);
 
-  const book = books.find((b) => b.id === params.id);
+  const bookId = typeof params.id === 'string' ? params.id : '';
+  const book = books.find((b) => b.id === bookId);
   if (!book) {
     notFound();
   }
