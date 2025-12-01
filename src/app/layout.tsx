@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/footer";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "BookExchange",
+  title: "Book Foster",
   description: "A platform to rent, buy, and donate books.",
 };
 
