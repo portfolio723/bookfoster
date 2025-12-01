@@ -37,7 +37,7 @@ export function BookCard({ book }: BookCardProps) {
         <CardFooter className="p-4 pt-0 flex justify-between items-center">
           <Badge variant="secondary">{book.condition}</Badge>
           <div className="text-right">
-            <p className="font-semibold text-lg text-primary">${book.price.toFixed(2)}</p>
+            <p className="font-semibold text-lg text-primary">₹{book.price.toFixed(2)}</p>
           </div>
         </CardFooter>
       </Card>

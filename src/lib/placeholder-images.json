@@ -63,20 +63,20 @@
     {
       "id": "donor1",
       "description": "A placeholder image for a user avatar.",
-      "imageUrl": "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjQ1Nzk3MzV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "person portrait"
+      "imageUrl": "https://images.unsplash.com/photo-1599566150163-29194dcaad36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxJbmRpYW4lMjBwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjQ4NzAyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "Indian person"
     },
     {
       "id": "donor2",
       "description": "A placeholder image for a user avatar.",
-      "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjQ1Nzk3MzV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "person portrait"
+      "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxJbmRpYW4lMjBtYW58ZW58MHx8fHwxNzY0ODcwMjU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "Indian man"
     },
     {
       "id": "donor3",
       "description": "A placeholder image for a user avatar.",
-      "imageUrl": "https://images.unsplash.com/photo-1531123414780-f74242c2b052?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGVyc29uJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzY0NTc5NzM1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "person portrait"
+      "imageUrl": "https://images.unsplash.com/photo-1601288496920-b6154fe3626a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxJbmRpYW4lMjB3b21hbnxlbnwwfHx8fDE3NjQ4NzAyNzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "Indian woman"
     }
   ]
 }
