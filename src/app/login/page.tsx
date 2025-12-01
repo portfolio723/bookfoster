@@ -13,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -76,8 +75,16 @@ export default function LoginPage() {
                         required
                         />
                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                        id="password"
+                        type="password"
+                        required
+                        />
+                    </div>
                     <Button className="w-full">
-                        Send Magic Link
+                        Sign In
                     </Button>
                 </div>
             )}
@@ -89,7 +96,7 @@ export default function LoginPage() {
             </div>
         </CardContent>
         <CardFooter className="flex flex-col items-center justify-center text-sm text-muted-foreground space-y-2">
-            <p>Don't have an account? <Link href="/signup" className="text-primary hover:underline">Sign Up</Link></p>
+            <p>Don't have an account? <Link href="/signup" className="text-primary font-semibold hover:underline">Sign Up</Link></p>
             <p>By continuing, you agree to our Terms of Service.</p>
         </CardFooter>
       </Card>
