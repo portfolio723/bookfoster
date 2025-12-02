@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/supabaseClient';
-import { User, AuthError, OtpType, Session } from '@supabase/supabase-js';
+import { User, AuthError, Session } from '@supabase/supabase-js';
 
 // Sign Up with Password
 export const authSignUpEmailPassword = async (
@@ -18,6 +18,7 @@ export const authSignUpEmailPassword = async (
           full_name: fullName,
           user_type: userType
         },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm-email`,
       },
     });
 
@@ -166,7 +167,7 @@ export const confirmEmail = async (token: string) => {
 export const requestPasswordReset = async (email: string) => {
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
     });
 
     if (error) throw error;
