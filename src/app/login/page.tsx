@@ -10,11 +10,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useState } from "react";
+import { AlertTriangle } from "lucide-react";
 
 // A simple SVG for Google Icon
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -28,7 +41,14 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function LoginPage() {
-    const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('phone');
+    const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('email');
+    const [error, setError] = useState<string | null>(null);
+
+    const handleLogin = (event: React.FormEvent) => {
+        event.preventDefault();
+        // Mock error for demonstration
+        setError("Invalid credentials. Please check your details and try again.");
+    }
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] bg-muted/20 p-4">
@@ -40,6 +60,15 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+            {error && (
+                <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Login Failed</AlertTitle>
+                    <AlertDescription>
+                        {error} You can also <Link href="/signup" className="underline font-semibold">create a new account</Link>.
+                    </AlertDescription>
+                </Alert>
+            )}
             <div className="grid grid-cols-1 gap-4">
                  <Button variant="outline">
                     <GoogleIcon className="mr-2 h-5 w-5" />
@@ -51,46 +80,71 @@ export default function LoginPage() {
                 <span className="mx-4 text-xs text-muted-foreground uppercase">Or continue with</span>
                 <Separator className="flex-1" />
             </div>
-
-            {loginMethod === 'phone' ? (
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="+91 98765 43210"
-                        required
-                        />
+            
+            <form onSubmit={handleLogin} className="space-y-4">
+                {loginMethod === 'phone' ? (
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="phone">Phone Number</Label>
+                            <Input
+                            id="phone"
+                            type="tel"
+                            placeholder="+91 98765 43210"
+                            required
+                            />
+                        </div>
+                        <Button type="submit" className="w-full">
+                            Send OTP
+                        </Button>
                     </div>
-                    <Button className="w-full">
-                        Send OTP
-                    </Button>
-                </div>
-            ) : (
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                        id="email"
-                        type="email"
-                        placeholder="name@example.com"
-                        required
-                        />
+                ) : (
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email Address</Label>
+                            <Input
+                            id="email"
+                            type="email"
+                            placeholder="name@example.com"
+                            required
+                            />
+                        </div>
+                         <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password">Password</Label>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                      <Button variant="link" className="p-0 h-auto text-xs">Forgot Password?</Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Reset Password</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Enter your email address below and we'll send you a link to reset your password.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                      <div className="space-y-2">
+                                          <Label htmlFor="reset-email">Email Address</Label>
+                                          <Input id="reset-email" type="email" placeholder="name@example.com" />
+                                      </div>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction>Send Reset Link</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                            </div>
+                            <Input
+                            id="password"
+                            type="password"
+                            required
+                            />
+                        </div>
+                        <Button type="submit" className="w-full">
+                            Sign In
+                        </Button>
                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                        id="password"
-                        type="password"
-                        required
-                        />
-                    </div>
-                    <Button className="w-full">
-                        Sign In
-                    </Button>
-                </div>
-            )}
+                )}
+            </form>
             
             <div className="text-center">
                 <Button variant="link" onClick={() => setLoginMethod(loginMethod === 'phone' ? 'email' : 'phone')}>
@@ -106,3 +160,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

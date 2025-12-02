@@ -8,16 +8,36 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ArrowLeft, AlertTriangle } from 'lucide-react';
 
-const GoogleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-1.5c-.83 0-1.5.67-1.5 1.5V12h3l-.5 3h-2.5v6.8c4.56-.93 8-4.96 8-9.8z"/>
-  </svg>
+const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48" {...props}>
+        <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+        <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/>
+        <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.222 0-9.612-3.512-11.284-8.281l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+        <path fill="#1976D2" d="M43.611 20.083H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l6.19 5.238C42.021 35.533 44 30.023 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+    </svg>
 );
 
+
 export default function SignupPage() {
-  const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSignup = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirm-password');
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match. Please re-enter them.");
+    } else {
+      setError(null);
+      // Proceed with sign-up logic
+      console.log("Passwords match. Signing up...");
+    }
+  };
   
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -46,7 +66,7 @@ export default function SignupPage() {
         </div>
 
         <div className="flex items-center justify-center p-8">
-          <div className="w-full max-w-md space-y-6">
+          <form onSubmit={handleSignup} className="w-full max-w-md space-y-6">
             <div>
               <Link href="/" className="md:hidden mb-6 inline-block text-sm text-primary hover:underline">
                   <ArrowLeft className="inline-block mr-1 h-4 w-4" />
@@ -61,34 +81,50 @@ export default function SignupPage() {
               </p>
             </div>
             
+             {error && (
+                <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Sign-up Error</AlertTitle>
+                    <AlertDescription>
+                        {error}
+                    </AlertDescription>
+                </Alert>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="first-name">First name</Label>
-                    <Input id="first-name" placeholder="Aarav" required />
+                    <Input id="first-name" name="first-name" placeholder="Aarav" required />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="last-name">Last name</Label>
-                    <Input id="last-name" placeholder="Patel" required />
+                    <Input id="last-name" name="last-name" placeholder="Patel" required />
                 </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor={authMethod}>{authMethod === 'phone' ? 'Phone Number' : 'Email Address'}</Label>
+              <Label htmlFor="email">Email Address</Label>
               <Input 
-                id={authMethod} 
-                type={authMethod === 'phone' ? 'tel' : 'email'} 
-                placeholder={authMethod === 'phone' ? '+91 98765 43210' : 'name@example.com'} 
+                id="email" 
+                name="email"
+                type="email"
+                placeholder="name@example.com" 
                 required 
               />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
+              <Input id="password" name="password" type="password" required />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Input id="confirm-password" name="confirm-password" type="password" required />
             </div>
             
             <div className="flex items-start space-x-3">
-                <Checkbox id="terms" />
+                <Checkbox id="terms" required />
                 <Label htmlFor="terms" className="text-sm font-normal text-muted-foreground">
                     By creating an account, you agree to our{' '}
                     <Link href="/terms" className="underline hover:text-primary">
@@ -111,21 +147,14 @@ export default function SignupPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-                <Button variant="outline">
-                    <GoogleIcon />
-                    Google
+                <Button variant="outline" type="button">
+                    <GoogleIcon className="mr-2 h-5 w-5" />
+                    Sign up with Google
                 </Button>
             </div>
-
-             <div className="text-center">
-                <Button variant="link" size="sm" onClick={() => setAuthMethod(authMethod === 'phone' ? 'email' : 'phone')}>
-                   {authMethod === 'phone' ? 'Use Email Instead' : 'Use Phone Instead'}
-                </Button>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
   );
 }
-
