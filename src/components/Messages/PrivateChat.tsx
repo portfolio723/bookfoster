@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function PrivateChat({ recipientId, recipientName, recipientAvatar }: { recipientId: string; recipientName: string, recipientAvatar?: string }) {
   const { user } = useAuth();
@@ -25,6 +26,7 @@ export default function PrivateChat({ recipientId, recipientName, recipientAvata
 
   const loadMessages = async () => {
     if (!user) return;
+    setLoading(true);
     const result = await getConversation(user.id, recipientId);
     if (result.success && result.messages) {
       setMessages(result.messages);
@@ -34,8 +36,33 @@ export default function PrivateChat({ recipientId, recipientName, recipientAvata
   
   useEffect(() => {
     loadMessages();
-    const interval = setInterval(loadMessages, 5000); // Poll every 5 seconds
-    return () => clearInterval(interval);
+  }, [user, recipientId]);
+
+  useEffect(() => {
+    if (!user) return;
+    
+    const channel = supabase
+      .channel(`private-messages-${user.id}-${recipientId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'private_messages',
+          filter: `recipient_id=eq.${user.id}`,
+        },
+        (payload) => {
+           // Ensure the message is from the person we are chatting with
+          if (payload.new.sender_id === recipientId) {
+             setMessages(prev => [...prev, payload.new]);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user, recipientId]);
 
   useEffect(() => {
@@ -48,18 +75,23 @@ export default function PrivateChat({ recipientId, recipientName, recipientAvata
 
     // Optimistically update UI
     const optimisticMessage = {
-      id: Math.random(), // temporary id
+      id: Math.random().toString(), // temporary id
       sender_id: user.id,
       message: newMessage,
       created_at: new Date().toISOString(),
     };
     setMessages(prev => [...prev, optimisticMessage]);
+    const messageToSend = newMessage;
     setNewMessage('');
     
-    await sendPrivateMessage(user.id, recipientId, newMessage);
+    const result = await sendPrivateMessage(user.id, recipientId, messageToSend);
     
-    // Fetch latest messages to confirm
-    await loadMessages();
+    if (result.error) {
+        // Revert optimistic update on failure
+        setMessages(prev => prev.filter(m => m.id !== optimisticMessage.id));
+        setNewMessage(messageToSend); // Restore input
+        console.error("Failed to send message:", result.error);
+    }
   };
 
   return (
