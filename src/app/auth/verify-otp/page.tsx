@@ -103,7 +103,7 @@ function VerifyOtpComponent() {
                             name="otp"
                             type="text"
                             inputMode="numeric"
-                            pattern="\d{6}"
+                            pattern="\\d{6}"
                             maxLength={6}
                             value={otp}
                             onChange={(e) => setOtp(e.target.value)}

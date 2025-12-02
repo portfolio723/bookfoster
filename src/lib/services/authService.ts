@@ -3,19 +3,20 @@ import { supabase } from '@/lib/supabaseClient';
 import { User, AuthError, OtpType } from '@supabase/supabase-js';
 
 // Sign Up with Password
-export const authSignUp = async (
+export const authSignUpEmailPassword = async (
   email: string,
   password: string,
   fullName: string,
+  userType: 'reader' | 'donor' | 'both'
 ) => {
   try {
-    // The user's profile is created automatically by a trigger in Supabase.
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
+          user_type: userType
         },
       },
     });
@@ -23,11 +24,12 @@ export const authSignUp = async (
     if (error) throw error;
     if (!data.user) throw new Error('User creation failed');
     
-    return { success: true, user: data.user };
+    return { success: true, user: data.user, message: 'Check your email to confirm your account' };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : 'Sign up failed' };
   }
 };
+
 
 // Sign In with Password
 export const authSignIn = async (email: string, password: string) => {
@@ -45,31 +47,52 @@ export const authSignIn = async (email: string, password: string) => {
 };
 
 // Sign In with OTP
-export const authSignInWithOtp = async (email: string) => {
+export const sendOtpEmail = async (email: string) => {
     try {
         const { data, error } = await supabase.auth.signInWithOtp({
             email,
         });
         if (error) throw error;
-        return { success: true, data };
+        return { success: true, data, message: 'OTP sent to your email' };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'OTP sign in failed' };
     }
 }
 
 // Verify OTP
-export const authVerifyOtp = async (email: string, token: string, type: OtpType) => {
+export const verifyOtpEmail = async (email: string, token: string) => {
     try {
         const { data, error } = await supabase.auth.verifyOtp({
             email,
             token,
-            type,
+            type: 'email',
         });
         if (error) throw error;
         return { success: true, session: data.session };
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'OTP verification failed' };
     }
+};
+
+// Resend OTP
+export const resendOtp = async (email: string) => {
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+    });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      message: 'OTP resent to your email',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to resend OTP',
+    };
+  }
 };
 
 
@@ -136,5 +159,26 @@ export const verifyEmail = async (token: string) => {
     return { success: true, session: data.session };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : 'Email verification failed' };
+  }
+};
+
+// Request Password Reset
+export const requestPasswordReset = async (email: string) => {
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      message: 'Password reset link sent to your email',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to send reset email',
+    };
   }
 };

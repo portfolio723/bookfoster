@@ -5,16 +5,16 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User, OtpType } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
-import { authSignIn, authSignOut, authSignUp, authSignInWithOtp, authVerifyOtp } from '@/lib/services/authService';
+import { authSignIn, authSignOut, authSignUpEmailPassword, sendOtpEmail, verifyOtpEmail } from '@/lib/services/authService';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, userData?: any) => Promise<any>;
+  signUp: (email: string, password: string, fullName: string, userType: 'reader' | 'donor' | 'both') => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
   signInWithOtp: (email: string) => Promise<any>;
-  verifyOtp: (email: string, token: string, type: OtpType) => Promise<any>;
+  verifyOtp: (email: string, token: string) => Promise<any>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<any>;
 }
@@ -50,9 +50,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription?.unsubscribe();
   }, [router]);
 
-  const signUp = async (email: string, password: string, userData?: any) => {
-    const fullName = userData?.display_name || '';
-    const result = await authSignUp(email, password, fullName);
+  const signUp = async (email: string, password: string, fullName: string, userType: 'reader' | 'donor' | 'both') => {
+    const result = await authSignUpEmailPassword(email, password, fullName, userType);
     if (result.error) throw new Error(result.error);
     return result;
   };
@@ -65,13 +64,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
   
   const signInWithOtp = async (email: string) => {
-    const result = await authSignInWithOtp(email);
+    const result = await sendOtpEmail(email);
     if (result.error) throw new Error(result.error);
     return result;
   };
 
-  const verifyOtp = async (email: string, token: string, type: OtpType) => {
-    const result = await authVerifyOtp(email, token, type);
+  const verifyOtp = async (email: string, token: string) => {
+    const result = await verifyOtpEmail(email, token);
     if (result.error) throw new Error(result.error);
     router.push('/');
     return result;
@@ -94,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return data;
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     session,
     loading,
