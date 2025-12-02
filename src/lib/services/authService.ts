@@ -52,6 +52,9 @@ export const sendOtpEmail = async (email: string) => {
     try {
         const { data, error } = await supabase.auth.signInWithOtp({
             email,
+            options: {
+                emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify-otp`,
+            }
         });
         if (error) throw error;
         return { success: true, data, message: 'OTP sent to your email' };
@@ -80,6 +83,9 @@ export const resendOtp = async (email: string) => {
   try {
     const { error } = await supabase.auth.signInWithOtp({
       email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify-otp`,
+      }
     });
 
     if (error) throw error;
