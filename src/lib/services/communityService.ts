@@ -326,5 +326,3 @@ export const updatePost = async (
     return { success: false, error: error instanceof Error ? error.message : 'Failed to update post' };
   }
 };
-
-    
