@@ -1,7 +1,7 @@
+
 'use client';
 import Link from 'next/link';
 import {
-  BookOpen,
   LogIn,
   LogOut,
   User as UserIcon,
@@ -19,18 +19,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUser } from '@/firebase/auth/use-user';
+import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/hooks/use-cart';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { Badge } from '@/components/ui/badge';
 
 export function Header() {
-  const { user, loading, signOut } = useUser();
-  const { cartItems } = useCart(user?.uid);
-  const { wishlist } = useWishlist(user?.uid);
+  const { user, loading, signOut } = useAuth();
+  const { cartItems } = useCart(user?.id);
+  const { wishlist } = useWishlist(user?.id);
 
   const getInitials = (name?: string | null) => {
-    if (!name) return 'U';
+    if (!name) {
+        const email = user?.email;
+        if(email) return email[0].toUpperCase();
+        return 'U';
+    }
     const names = name.split(' ');
     if (names.length > 1) {
       return `${names[0][0]}${names[names.length - 1][0]}`;
@@ -91,9 +95,9 @@ export function Header() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar>
-                      <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
+                      <AvatarImage src={user.user_metadata.avatar_url ?? ''} alt={user.user_metadata.display_name ?? 'User'} />
                       <AvatarFallback>
-                        {getInitials(user.displayName)}
+                        {getInitials(user.user_metadata.display_name)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -102,7 +106,7 @@ export function Header() {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {user.displayName}
+                        {user.user_metadata.display_name}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}

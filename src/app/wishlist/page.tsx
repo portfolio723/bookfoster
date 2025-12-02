@@ -2,15 +2,15 @@
 
 import Link from 'next/link';
 import { useWishlist } from '@/hooks/use-wishlist';
-import { useUser } from '@/firebase/auth/use-user';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { BookCard } from '@/components/book-card';
 import { books } from '@/lib/data';
 import { AlertTriangle, Heart } from 'lucide-react';
 
 export default function WishlistPage() {
-  const { user } = useUser();
-  const { wishlist, removeFromWishlist } = useWishlist(user?.uid);
+  const { user } = useAuth();
+  const { wishlist, removeFromWishlist } = useWishlist(user?.id);
 
   if (!user) {
     return (

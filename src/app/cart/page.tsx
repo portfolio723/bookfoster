@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/hooks/use-cart';
-import { useUser } from '@/firebase/auth/use-user';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -12,8 +12,8 @@ import { books } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function CartPage() {
-  const { user } = useUser();
-  const { cartItems, updateItem, removeItem, clearCart } = useCart(user?.uid);
+  const { user } = useAuth();
+  const { cartItems, updateItem, removeItem, clearCart } = useCart(user?.id);
 
   const getBookDetails = (bookId: string) => {
     return books.find((book) => book.id === bookId);

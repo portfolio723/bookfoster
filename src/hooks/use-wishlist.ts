@@ -1,71 +1,105 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  addDoc,
-  deleteDoc,
-  serverTimestamp,
-  query,
-  where,
-  getDocs,
-  doc
-} from 'firebase/firestore';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useToast } from './use-toast';
 
 export type WishlistItem = {
   id: string;
+  user_id: string;
   bookId: string;
+  created_at: string;
 };
 
 export function useWishlist(userId?: string) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const db = getFirestore();
+  const { toast } = useToast();
+
+  const fetchWishlistItems = useCallback(async () => {
+    if (!userId) return;
+
+    const { data, error } = await supabase
+      .from('wishlist')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching wishlist items:', error);
+    } else {
+      setWishlist(data as WishlistItem[]);
+    }
+  }, [userId]);
 
   useEffect(() => {
-    if (!userId) {
-      setWishlist([]);
-      return;
-    }
+    fetchWishlistItems();
+  }, [fetchWishlistItems]);
 
-    const wishlistColRef = collection(db, 'users', userId, 'wishlist');
-    const unsubscribe = onSnapshot(wishlistColRef, (snapshot) => {
-      const items = snapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as WishlistItem)
-      );
-      setWishlist(items);
-    });
+  useEffect(() => {
+    if (!userId) return;
 
-    return () => unsubscribe();
-  }, [userId, db]);
+    const channel = supabase
+      .channel(`wishlist-changes:${userId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'wishlist', filter: `user_id=eq.${userId}` },
+        (payload) => {
+          console.log('Wishlist change received!', payload);
+          fetchWishlistItems();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, fetchWishlistItems]);
+
 
   const addToWishlist = async (bookId: string) => {
-    if (!userId) return;
-    const wishlistColRef = collection(db, 'users', userId, 'wishlist');
-    
-    // Check if already in wishlist
-    const q = query(wishlistColRef, where("bookId", "==", bookId));
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-        return; // Already exists
+    if (!userId) {
+      toast({
+        variant: 'destructive',
+        title: 'Please log in',
+        description: 'You need to be logged in to manage your wishlist.',
+      });
+      return;
     }
+    
+    const existingItem = wishlist.find(item => item.bookId === bookId);
+    if(existingItem) {
+        toast({ title: "Already in your wishlist." });
+        return;
+    }
+    
+    const { error } = await supabase.from('wishlist').insert([
+      {
+        user_id: userId,
+        bookId: bookId,
+      },
+    ]);
 
-    await addDoc(wishlistColRef, {
-      bookId,
-      addedAt: serverTimestamp(),
-    });
+    if (error) {
+      console.error('Error adding to wishlist:', error);
+      toast({ variant: 'destructive', title: "Something went wrong." });
+    } else {
+      toast({ title: 'Added to wishlist!' });
+    }
   };
 
   const removeFromWishlist = async (bookId: string) => {
     if (!userId) return;
-    const wishlistColRef = collection(db, 'users', userId, 'wishlist');
-    const q = query(wishlistColRef, where('bookId', '==', bookId));
-    const querySnapshot = await getDocs(q);
 
-    if (!querySnapshot.empty) {
-        const docId = querySnapshot.docs[0].id;
-        await deleteDoc(doc(db, 'users', userId, 'wishlist', docId));
+    const itemToRemove = wishlist.find(item => item.bookId === bookId);
+    if (!itemToRemove) return;
+
+    const { error } = await supabase.from('wishlist').delete().eq('id', itemToRemove.id);
+
+     if (error) {
+      console.error('Error removing from wishlist:', error);
+      toast({ variant: 'destructive', title: "Something went wrong." });
+    } else {
+      toast({ title: 'Removed from wishlist!' });
     }
   };
 

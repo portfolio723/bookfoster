@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeft, AlertTriangle } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48" {...props}>
@@ -20,22 +22,34 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
-
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
+  const { signUp, signInWithGoogle } = useAuth();
+  const router = useRouter();
 
-  const handleSignup = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
     const formData = new FormData(event.currentTarget);
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirm-password');
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirm-password') as string;
+    const firstName = formData.get('first-name') as string;
+    const lastName = formData.get('last-name') as string;
 
     if (password !== confirmPassword) {
       setError("Passwords do not match. Please re-enter them.");
-    } else {
-      setError(null);
-      // Proceed with sign-up logic
-      console.log("Passwords match. Signing up...");
+      return;
+    }
+
+    try {
+      await signUp(email, password, {
+        display_name: `${firstName} ${lastName}`,
+      });
+      router.push('/');
+      alert('Sign up successful! Please check your email to verify your account.');
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred during sign-up.");
     }
   };
   
@@ -147,7 +161,7 @@ export default function SignupPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-                <Button variant="outline" type="button">
+                <Button variant="outline" type="button" onClick={signInWithGoogle}>
                     <GoogleIcon className="mr-2 h-5 w-5" />
                     Sign up with Google
                 </Button>

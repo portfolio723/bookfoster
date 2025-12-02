@@ -28,6 +28,8 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 // A simple SVG for Google Icon
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -43,11 +45,33 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function LoginPage() {
     const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('email');
     const [error, setError] = useState<string | null>(null);
+    const [resetEmail, setResetEmail] = useState('');
+    const { signIn, signInWithGoogle } = useAuth();
 
-    const handleLogin = (event: React.FormEvent) => {
+
+    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // Mock error for demonstration
-        setError("Invalid credentials. Please check your details and try again.");
+        setError(null);
+        const formData = new FormData(event.currentTarget);
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        try {
+            await signIn(email, password);
+        } catch (err: any) {
+            setError(err.message || 'An unexpected error occurred.');
+        }
+    }
+    
+    const handlePasswordReset = async () => {
+        const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+            redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) {
+            setError(error.message);
+        } else {
+            alert('Password reset link sent! Check your email.');
+        }
     }
 
   return (
@@ -70,7 +94,7 @@ export default function LoginPage() {
                 </Alert>
             )}
             <div className="grid grid-cols-1 gap-4">
-                 <Button variant="outline">
+                 <Button variant="outline" onClick={signInWithGoogle}>
                     <GoogleIcon className="mr-2 h-5 w-5" />
                     Sign in with Google
                 </Button>
@@ -88,6 +112,7 @@ export default function LoginPage() {
                             <Label htmlFor="phone">Phone Number</Label>
                             <Input
                             id="phone"
+                            name="phone"
                             type="tel"
                             placeholder="+91 98765 43210"
                             required
@@ -103,6 +128,7 @@ export default function LoginPage() {
                             <Label htmlFor="email">Email Address</Label>
                             <Input
                             id="email"
+                            name="email"
                             type="email"
                             placeholder="name@example.com"
                             required
@@ -124,17 +150,18 @@ export default function LoginPage() {
                                     </AlertDialogHeader>
                                       <div className="space-y-2">
                                           <Label htmlFor="reset-email">Email Address</Label>
-                                          <Input id="reset-email" type="email" placeholder="name@example.com" />
+                                          <Input id="reset-email" type="email" placeholder="name@example.com" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} />
                                       </div>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                      <AlertDialogAction>Send Reset Link</AlertDialogAction>
+                                      <AlertDialogAction onClick={handlePasswordReset}>Send Reset Link</AlertDialogAction>
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
                                 </AlertDialog>
                             </div>
                             <Input
                             id="password"
+                            name="password"
                             type="password"
                             required
                             />
@@ -160,4 +187,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

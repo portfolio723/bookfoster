@@ -17,19 +17,19 @@ import {
   Heart,
   AlertTriangle,
 } from 'lucide-react';
-import { useUser } from '@/firebase/auth/use-user';
-import { useWishlist } from '@/hooks/use-wishlist';
-import { useCart } from '@/hooks/use-cart';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { useWishlist } from '@/hooks/use-wishlist';
+import { useCart } from '@/hooks/use-cart';
 
 export default function BookDetailPage() {
   const params = useParams();
   const [purchaseType, setPurchaseType] = useState<'buy' | 'rent'>('buy');
-  const { user } = useUser();
+  const { user } = useAuth();
   const { toast } = useToast();
-  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist(user?.uid);
-  const { addToCart } = useCart(user?.uid);
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist(user?.id);
+  const { addToCart } = useCart(user?.id);
 
   const bookId = typeof params.id === 'string' ? params.id : '';
   const book = books.find((b) => b.id === bookId);
