@@ -47,18 +47,18 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-lg font-bold font-headline">Book Foster</span>
+            <span className="text-lg font-bold font-headline">Books For Foster</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link href="/" className="transition-colors hover:text-primary">
-              Browse
+            <Link href="/#borrow" className="transition-colors hover:text-primary">
+              Borrow
             </Link>
             <Link
               href="/donate"
               className="transition-colors hover:text-primary"
             >
-              Donate a Book
+              Donate
             </Link>
             <Link href="/chat" className="transition-colors hover:text-primary">
               Messages
