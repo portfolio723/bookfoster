@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from './use-toast';
+import * as wishlistService from '@/lib/services/wishlistService';
 
 export type WishlistItem = {
   id: string;
@@ -19,15 +20,21 @@ export function useWishlist(userId?: string) {
   const fetchWishlistItems = useCallback(async () => {
     if (!userId) return;
 
-    const { data, error } = await supabase
-      .from('wishlist')
-      .select('*')
-      .eq('user_id', userId);
+    const { success, wishlist, error } = await wishlistService.getUserWishlist(userId);
 
     if (error) {
       console.error('Error fetching wishlist items:', error);
-    } else {
-      setWishlist(data as WishlistItem[]);
+    } else if (success && wishlist) {
+      // The service returns a more complex object, let's adapt
+      const adaptedWishlist = wishlist.map((item: any) => ({
+        id: item.id,
+        user_id: item.user_id,
+        bookId: item.book_id,
+        created_at: item.added_at,
+        // The service also returns the full book object, which you could use later
+        book: item.books,
+      }));
+      setWishlist(adaptedWishlist);
     }
   }, [userId]);
 
@@ -72,17 +79,12 @@ export function useWishlist(userId?: string) {
         return;
     }
     
-    const { error } = await supabase.from('wishlist').insert([
-      {
-        user_id: userId,
-        bookId: bookId,
-      },
-    ]);
+    const { success, error } = await wishlistService.addToWishlist(userId, bookId);
 
     if (error) {
       console.error('Error adding to wishlist:', error);
-      toast({ variant: 'destructive', title: "Something went wrong." });
-    } else {
+      toast({ variant: 'destructive', title: error === 'Already in wishlist' ? error : "Something went wrong." });
+    } else if (success) {
       toast({ title: 'Added to wishlist!' });
     }
   };
@@ -90,15 +92,12 @@ export function useWishlist(userId?: string) {
   const removeFromWishlist = async (bookId: string) => {
     if (!userId) return;
 
-    const itemToRemove = wishlist.find(item => item.bookId === bookId);
-    if (!itemToRemove) return;
-
-    const { error } = await supabase.from('wishlist').delete().eq('id', itemToRemove.id);
+    const { success, error } = await wishlistService.removeFromWishlist(userId, bookId);
 
      if (error) {
       console.error('Error removing from wishlist:', error);
       toast({ variant: 'destructive', title: "Something went wrong." });
-    } else {
+    } else if (success) {
       toast({ title: 'Removed from wishlist!' });
     }
   };
