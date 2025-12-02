@@ -53,30 +53,32 @@ export default function Home() {
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="text-center py-20 lg:py-32 px-4 bg-secondary/30">
-          <h1 className="text-5xl md:text-7xl font-black font-headline mb-4">
-            A Book Shared is a Future Built.
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Empowering students with free book rentals through a community-driven donation platform by PixelKliq.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" asChild>
-              <Link href="/donate">Donate Books</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="#borrow">Borrow Books</Link>
-            </Button>
-            <Button size="lg" variant="ghost" asChild>
-              <Link href="/auth/signup">Join the Community (Sign Up)</Link>
-            </Button>
+          <div className="container">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black font-headline mb-4">
+              A Book Shared is a Future Built.
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Empowering students with free book rentals through a community-driven donation platform by PixelKliq.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" asChild className="w-full sm:w-auto">
+                <Link href="/donate">Donate Books</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
+                <Link href="#borrow">Borrow Books</Link>
+              </Button>
+              <Button size="lg" variant="ghost" asChild className="w-full sm:w-auto">
+                <Link href="/auth/signup">Join the Community</Link>
+              </Button>
+            </div>
           </div>
         </section>
         
         {/* Why BFF Exists Section */}
         <section className="py-20 lg:py-24 px-4 container">
             <div className="text-center max-w-3xl mx-auto">
-                <h2 className="text-4xl font-bold font-headline mb-4">Why BFF Exists</h2>
-                <p className="text-muted-foreground text-lg">
+                <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">Why BFF Exists</h2>
+                <p className="text-muted-foreground text-base md:text-lg">
                     At BFF: Books for Foster, we believe education should never stop because of the cost of books. Our mission is to build a supportive, sustainable community where students can borrow books for free — and those who have finished their studies can give their books a new purpose.
                 </p>
             </div>
@@ -86,28 +88,28 @@ export default function Home() {
                         <Book className="h-8 w-8" />
                     </div>
                     <h3 className="text-xl font-bold font-headline">Free Access</h3>
-                    <p className="text-muted-foreground mt-1">Unlock a library of academic and skill-based books at no cost.</p>
+                    <p className="text-muted-foreground mt-1 text-sm">Unlock a library of academic and skill-based books at no cost.</p>
                 </Card>
                 <Card className="text-center p-6">
                     <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
                         <Users className="h-8 w-8" />
                     </div>
                     <h3 className="text-xl font-bold font-headline">Community Powered</h3>
-                    <p className="text-muted-foreground mt-1">Join a network of students and donors helping each other succeed.</p>
+                    <p className="text-muted-foreground mt-1 text-sm">Join a network of students and donors helping each other succeed.</p>
                 </Card>
                 <Card className="text-center p-6">
                     <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
                         <Recycle className="h-8 w-8" />
                     </div>
                     <h3 className="text-xl font-bold font-headline">Sustainability</h3>
-                    <p className="text-muted-foreground mt-1">Give books a second life, reducing waste and promoting a circular economy.</p>
+                    <p className="text-muted-foreground mt-1 text-sm">Give books a second life, reducing waste and promoting a circular economy.</p>
                 </Card>
                  <Card className="text-center p-6">
                     <div className="mx-auto bg-primary text-primary-foreground rounded-full h-16 w-16 flex items-center justify-center mb-4">
                         <HandHeart className="h-8 w-8" />
                     </div>
                     <h3 className="text-xl font-bold font-headline">Real Impact</h3>
-                    <p className="text-muted-foreground mt-1">Your donation directly empowers a student's educational journey.</p>
+                    <p className="text-muted-foreground mt-1 text-sm">Your donation directly empowers a student's educational journey.</p>
                 </Card>
             </div>
         </section>
@@ -115,7 +117,7 @@ export default function Home() {
         {/* How It Works Section */}
         <section id="borrow" className="py-20 lg:py-24 px-4 bg-secondary/30">
             <div className="container text-center">
-                <h2 className="text-4xl font-bold font-headline mb-12">How It Works</h2>
+                <h2 className="text-3xl md:text-4xl font-bold font-headline mb-12">How It Works</h2>
                 <Tabs defaultValue="borrowers" className="max-w-4xl mx-auto">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="borrowers">For Borrowers</TabsTrigger>
@@ -123,39 +125,39 @@ export default function Home() {
                     </TabsList>
                     <TabsContent value="borrowers">
                         <div className="grid md:grid-cols-3 gap-8 text-center mt-12">
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center p-4">
                                 <div className="text-5xl mb-4">1️⃣</div>
                                 <h3 className="font-bold text-lg">Browse & Request</h3>
-                                <p className="text-muted-foreground">Search for the books you need and place a free rental request.</p>
+                                <p className="text-muted-foreground text-sm">Search for the books you need and place a free rental request.</p>
                             </div>
-                             <div className="flex flex-col items-center">
+                             <div className="flex flex-col items-center p-4">
                                 <div className="text-5xl mb-4">2️⃣</div>
                                 <h3 className="font-bold text-lg">Coordinate & Collect</h3>
-                                <p className="text-muted-foreground">Receive a notification to coordinate pickup from the donor or a BFF hub.</p>
+                                <p className="text-muted-foreground text-sm">Receive a notification to coordinate pickup from the donor or a BFF hub.</p>
                             </div>
-                             <div className="flex flex-col items-center">
+                             <div className="flex flex-col items-center p-4">
                                 <div className="text-5xl mb-4">3️⃣</div>
                                 <h3 className="font-bold text-lg">Study & Return</h3>
-                                <p className="text-muted-foreground">Use the book for your studies and return it on time for the next student.</p>
+                                <p className="text-muted-foreground text-sm">Use the book for your studies and return it on time for the next student.</p>
                             </div>
                         </div>
                     </TabsContent>
                     <TabsContent value="donors">
                         <div className="grid md:grid-cols-3 gap-8 text-center mt-12">
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center p-4">
                                 <div className="text-5xl mb-4">1️⃣</div>
                                 <h3 className="font-bold text-lg">Sign Up & List</h3>
-                                <p className="text-muted-foreground">Create an account and easily upload the details of the books you want to donate.</p>
+                                <p className="text-muted-foreground text-sm">Create an account and easily upload the details of the books you want to donate.</p>
                             </div>
-                             <div className="flex flex-col items-center">
+                             <div className="flex flex-col items-center p-4">
                                 <div className="text-5xl mb-4">2️⃣</div>
                                 <h3 className="font-bold text-lg">Coordinate Drop-off</h3>
-                                <p className="text-muted-foreground">Arrange for a pickup or drop your books off at a designated BFF center.</p>
+                                <p className="text-muted-foreground text-sm">Arrange for a pickup or drop your books off at a designated BFF center.</p>
                             </div>
-                             <div className="flex flex-col items-center">
+                             <div className="flex flex-col items-center p-4">
                                 <div className="text-5xl mb-4">3️⃣</div>
                                 <h3 className="font-bold text-lg">See Your Impact</h3>
-                                <p className="text-muted-foreground">Get notified when your book finds a new learner and track its journey.</p>
+                                <p className="text-muted-foreground text-sm">Get notified when your book finds a new learner and track its journey.</p>
                             </div>
                         </div>
                     </TabsContent>
@@ -168,20 +170,20 @@ export default function Home() {
             <div className="container">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                     <div>
-                        <p className="text-5xl md:text-6xl font-bold font-headline">1,200+</p>
-                        <p className="text-primary-foreground/80 mt-2">Books Donated</p>
+                        <p className="text-4xl sm:text-5xl md:text-6xl font-bold font-headline">1,200+</p>
+                        <p className="text-primary-foreground/80 mt-2 text-sm sm:text-base">Books Donated</p>
                     </div>
                      <div>
-                        <p className="text-5xl md:text-6xl font-bold font-headline">800+</p>
-                        <p className="text-primary-foreground/80 mt-2">Students Benefited</p>
+                        <p className="text-4xl sm:text-5xl md:text-6xl font-bold font-headline">800+</p>
+                        <p className="text-primary-foreground/80 mt-2 text-sm sm:text-base">Students Benefited</p>
                     </div>
                      <div>
-                        <p className="text-5xl md:text-6xl font-bold font-headline">50+</p>
-                        <p className="text-primary-foreground/80 mt-2">Subjects Covered</p>
+                        <p className="text-4xl sm:text-5xl md:text-6xl font-bold font-headline">50+</p>
+                        <p className="text-primary-foreground/80 mt-2 text-sm sm:text-base">Subjects Covered</p>
                     </div>
                      <div>
-                        <p className="text-5xl md:text-6xl font-bold font-headline">5</p>
-                        <p className="text-primary-foreground/80 mt-2">Cities Served</p>
+                        <p className="text-4xl sm:text-5xl md:text-6xl font-bold font-headline">5</p>
+                        <p className="text-primary-foreground/80 mt-2 text-sm sm:text-base">Cities Served</p>
                     </div>
                 </div>
             </div>
@@ -190,12 +192,12 @@ export default function Home() {
         {/* Featured Categories Section */}
         <section className="py-20 lg:py-24 px-4 container">
              <div className="text-center max-w-3xl mx-auto">
-                <h2 className="text-4xl font-bold font-headline mb-4">Find Books Across All Topics</h2>
-                <p className="text-muted-foreground text-lg mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">Find Books Across All Topics</h2>
+                <p className="text-muted-foreground text-base md:text-lg mb-12">
                     From competitive exams to skill development, our library is constantly growing.
                 </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {categories.map((category) => (
                     <Link href={category.href} key={category.name}>
                         <div className="group flex flex-col items-center justify-center p-4 border rounded-lg h-32 text-center transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg hover:-translate-y-1">
@@ -210,20 +212,20 @@ export default function Home() {
         {/* Community Stories Section */}
         <section className="py-20 lg:py-24 px-4 bg-secondary/30">
             <div className="container">
-                <h2 className="text-4xl font-bold font-headline text-center mb-12">Community Stories</h2>
+                <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-12">Community Stories</h2>
                  <Carousel
                     opts={{ align: "start", loop: true }}
-                    className="w-full max-w-4xl mx-auto"
+                    className="w-full max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto"
                     >
                     <CarouselContent>
                         {testimonials.map((testimonial, index) => (
-                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                        <CarouselItem key={index} className="sm:basis-1/2 lg:basis-1/3">
                             <div className="p-1 h-full">
-                            <Card className="h-full flex flex-col justify-between">
-                                <CardContent className="p-6">
+                            <Card className="h-full flex flex-col">
+                                <CardContent className="p-6 flex-grow">
                                     <p className="text-muted-foreground">"{testimonial.quote}"</p>
                                 </CardContent>
-                                <div className="flex items-center gap-4 p-6 pt-0">
+                                <div className="flex items-center gap-4 p-6 pt-0 mt-auto">
                                     <Avatar>
                                         <AvatarImage src={testimonial.avatar} data-ai-hint="person portrait" />
                                         <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
@@ -238,17 +240,17 @@ export default function Home() {
                         </CarouselItem>
                         ))}
                     </CarouselContent>
-                    <CarouselPrevious className="hidden sm:flex" />
-                    <CarouselNext className="hidden sm:flex" />
+                    <CarouselPrevious className="hidden sm:flex left-[-2.5rem]" />
+                    <CarouselNext className="hidden sm:flex right-[-2.5rem]" />
                     </Carousel>
             </div>
         </section>
         
         {/* Final CTA Section */}
         <section className="py-20 lg:py-24 px-4 container">
-            <div className="max-w-3xl mx-auto text-center bg-primary text-primary-foreground p-12 rounded-lg">
-                 <h2 className="text-4xl font-bold font-headline mb-4">Ready to Make a Difference?</h2>
-                 <p className="text-primary-foreground/80 mb-8">
+            <div className="max-w-3xl mx-auto text-center bg-primary text-primary-foreground p-8 sm:p-12 rounded-lg">
+                 <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">Ready to Make a Difference?</h2>
+                 <p className="text-primary-foreground/80 mb-8 text-base md:text-lg">
                     Whether you have books to give or need books to learn, you can start right now. Join our community and be a part of India's learning revolution.
                  </p>
                  <Button size="lg" variant="secondary" asChild>
