@@ -29,7 +29,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 
 // A simple SVG for Google Icon
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -64,6 +64,10 @@ export default function LoginPage() {
     }
     
     const handlePasswordReset = async () => {
+        if (!resetEmail) {
+            setError("Please enter your email address.");
+            return;
+        }
         const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
             redirectTo: `${window.location.origin}/reset-password`,
         });

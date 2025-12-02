@@ -3,8 +3,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { authSignIn, authSignOut, authSignUp } from '@/lib/services/authService';
 
 interface AuthContextType {
   user: User | null;
@@ -45,30 +46,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: userData,
-      },
-    });
-    if (error) throw error;
-    return data;
+    const fullName = userData?.display_name || '';
+    const result = await authSignUp(email, password, fullName);
+    if (result.error) throw new Error(result.error);
+    return result;
   };
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
+    const result = await authSignIn(email, password);
+    if (result.error) throw new Error(result.error);
     router.push('/');
-    return data;
+    return result;
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    const result = await authSignOut();
+    if (result.error) throw new Error(result.error);
     router.push('/');
   };
 
