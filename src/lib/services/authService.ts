@@ -10,8 +10,8 @@ export const authSignUp = async (
   userType: 'reader' | 'donor' | 'both' = 'reader'
 ) => {
   try {
-    // Create auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // The user's profile is created automatically by a trigger in Supabase.
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -22,22 +22,10 @@ export const authSignUp = async (
       },
     });
 
-    if (authError) throw authError;
-    if (!authData.user) throw new Error('User creation failed');
-
-    // Create profile
-    const { error: profileError } = await supabase.from('profiles').insert([
-      {
-        id: authData.user.id,
-        email,
-        full_name: fullName,
-        user_type: userType,
-      },
-    ]);
-
-    if (profileError) throw profileError;
-
-    return { success: true, user: authData.user };
+    if (error) throw error;
+    if (!data.user) throw new Error('User creation failed');
+    
+    return { success: true, user: data.user };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : 'Sign up failed' };
   }
