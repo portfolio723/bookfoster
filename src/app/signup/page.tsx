@@ -12,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Separator } from '@/components/ui/separator';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48" {...props}>
@@ -79,7 +80,7 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center p-8">
+        <main className="flex items-center justify-center p-8">
           <form onSubmit={handleSignup} className="w-full max-w-md space-y-6">
             <div>
               <Link href="/" className="md:hidden mb-6 inline-block text-sm text-primary hover:underline">
@@ -104,6 +105,19 @@ export default function SignupPage() {
                     </AlertDescription>
                 </Alert>
             )}
+
+            <Button variant="outline" type="button" className="w-full" onClick={signInWithGoogle}>
+                <GoogleIcon className="mr-2 h-5 w-5" />
+                Sign up with Google
+            </Button>
+            
+            <div className="flex items-center">
+              <div className="flex-1 border-t" />
+              <div className="px-4 text-xs uppercase text-muted-foreground">
+                Or continue with email
+              </div>
+              <div className="flex-1 border-t" />
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -152,22 +166,8 @@ export default function SignupPage() {
               Create account
             </Button>
             
-            <div className="flex items-center">
-              <div className="flex-1 border-t" />
-              <div className="px-4 text-xs uppercase text-muted-foreground">
-                Or continue with
-              </div>
-              <div className="flex-1 border-t" />
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-                <Button variant="outline" type="button" onClick={signInWithGoogle}>
-                    <GoogleIcon className="mr-2 h-5 w-5" />
-                    Sign up with Google
-                </Button>
-            </div>
           </form>
-        </div>
+        </main>
       </div>
     </div>
   );
