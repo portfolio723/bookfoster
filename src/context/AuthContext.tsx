@@ -2,10 +2,10 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Session, User } from '@supabase/supabase-js';
+import { Session, User, OtpType } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
-import { authSignIn, authSignOut, authSignUp } from '@/lib/services/authService';
+import { authSignIn, authSignOut, authSignUp, authSignInWithOtp, authVerifyOtp } from '@/lib/services/authService';
 
 interface AuthContextType {
   user: User | null;
@@ -13,6 +13,8 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, userData?: any) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
+  signInWithOtp: (email: string) => Promise<any>;
+  verifyOtp: (email: string, token: string, type: OtpType) => Promise<any>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<any>;
 }
@@ -40,10 +42,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (_event === 'SIGNED_IN') {
+        router.push('/');
+      }
     });
 
     return () => subscription?.unsubscribe();
-  }, []);
+  }, [router]);
 
   const signUp = async (email: string, password: string, userData?: any) => {
     const fullName = userData?.display_name || '';
@@ -54,6 +59,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     const result = await authSignIn(email, password);
+    if (result.error) throw new Error(result.error);
+    router.push('/');
+    return result;
+  };
+  
+  const signInWithOtp = async (email: string) => {
+    const result = await authSignInWithOtp(email);
+    if (result.error) throw new Error(result.error);
+    return result;
+  };
+
+  const verifyOtp = async (email: string, token: string, type: OtpType) => {
+    const result = await authVerifyOtp(email, token, type);
     if (result.error) throw new Error(result.error);
     router.push('/');
     return result;
@@ -69,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     if (error) throw error;
@@ -82,6 +100,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signUp,
     signIn,
+    signInWithOtp,
+    verifyOtp,
     signOut,
     signInWithGoogle,
   };

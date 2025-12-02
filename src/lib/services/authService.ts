@@ -1,5 +1,6 @@
+
 import { supabase } from '@/lib/supabaseClient';
-import { User, AuthError } from '@supabase/supabase-js';
+import { User, AuthError, OtpType } from '@supabase/supabase-js';
 
 // Sign Up with profile creation
 export const authSignUp = async (
@@ -42,7 +43,7 @@ export const authSignUp = async (
   }
 };
 
-// Sign In
+// Sign In with Password
 export const authSignIn = async (email: string, password: string) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -56,6 +57,38 @@ export const authSignIn = async (email: string, password: string) => {
     return { success: false, error: error instanceof Error ? error.message : 'Sign in failed' };
   }
 };
+
+// Sign In with OTP
+export const authSignInWithOtp = async (email: string) => {
+    try {
+        const { data, error } = await supabase.auth.signInWithOtp({
+            email,
+            options: {
+                shouldCreateUser: false, // User should already exist
+            }
+        });
+        if (error) throw error;
+        return { success: true, data };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'OTP sign in failed' };
+    }
+}
+
+// Verify OTP
+export const authVerifyOtp = async (email: string, token: string, type: OtpType) => {
+    try {
+        const { data, error } = await supabase.auth.verifyOtp({
+            email,
+            token,
+            type,
+        });
+        if (error) throw error;
+        return { success: true, session: data.session };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'OTP verification failed' };
+    }
+};
+
 
 // Sign Out
 export const authSignOut = async () => {

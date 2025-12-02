@@ -31,6 +31,7 @@ import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // A simple SVG for Google Icon
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -44,27 +45,40 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function LoginPage() {
-    const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('email');
+    const [loginMethod, setLoginMethod] = useState<'otp' | 'email'>('email');
     const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
     const [resetEmail, setResetEmail] = useState('');
-    const { signIn, signInWithGoogle } = useAuth();
+    const { signIn, signInWithGoogle, signInWithOtp } = useAuth();
+    const router = useRouter();
 
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError(null);
+        setMessage(null);
         const formData = new FormData(event.currentTarget);
         const email = formData.get('email') as string;
-        const password = formData.get('password') as string;
-
-        try {
-            await signIn(email, password);
-        } catch (err: any) {
-            setError(err.message || 'An unexpected error occurred.');
+        
+        if (loginMethod === 'email') {
+            const password = formData.get('password') as string;
+            try {
+                await signIn(email, password);
+            } catch (err: any) {
+                setError(err.message || 'An unexpected error occurred.');
+            }
+        } else { // OTP method
+            try {
+                await signInWithOtp(email);
+                router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
+            } catch (err: any) {
+                setError(err.message || 'Failed to send OTP.');
+            }
         }
     }
     
     const handlePasswordReset = async () => {
+        setError(null);
         if (!resetEmail) {
             setError("Please enter your email address.");
             return;
@@ -75,7 +89,7 @@ export default function LoginPage() {
         if (error) {
             setError(error.message);
         } else {
-            alert('Password reset link sent! Check your email.');
+            setMessage('Password reset link sent! Check your email.');
         }
     }
 
@@ -123,7 +137,15 @@ export default function LoginPage() {
                             <AlertTriangle className="h-4 w-4" />
                             <AlertTitle>Login Failed</AlertTitle>
                             <AlertDescription>
-                                {error} You can also <Link href="/signup" className="underline font-semibold">create a new account</Link>.
+                                {error}
+                            </AlertDescription>
+                        </Alert>
+                    )}
+                    {message && (
+                        <Alert>
+                            <AlertTitle>Heads up!</AlertTitle>
+                            <AlertDescription>
+                                {message}
                             </AlertDescription>
                         </Alert>
                     )}
@@ -140,76 +162,58 @@ export default function LoginPage() {
                     </div>
                     
                     <form onSubmit={handleLogin} className="space-y-4">
-                        {loginMethod === 'phone' ? (
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="phone">Phone Number</Label>
-                                    <Input
-                                    id="phone"
-                                    name="phone"
-                                    type="tel"
-                                    placeholder="+91 98765 43210"
-                                    required
-                                    />
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email Address</Label>
+                            <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="name@example.com"
+                            required
+                            />
+                        </div>
+                        {loginMethod === 'email' && (
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password">Password</Label>
+                                    <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="link" className="p-0 h-auto text-xs">Forgot Password?</Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                        <AlertDialogTitle>Reset Password</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Enter your email address below and we'll send you a link to reset your password.
+                                        </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="reset-email">Email Address</Label>
+                                            <Input id="reset-email" type="email" placeholder="name@example.com" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} />
+                                        </div>
+                                        <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={handlePasswordReset}>Send Reset Link</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                    </AlertDialog>
                                 </div>
-                                <Button type="submit" className="w-full">
-                                    Send OTP
-                                </Button>
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">Email Address</Label>
-                                    <Input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    placeholder="name@example.com"
-                                    required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <Label htmlFor="password">Password</Label>
-                                        <AlertDialog>
-                                        <AlertDialogTrigger asChild>
-                                            <Button variant="link" className="p-0 h-auto text-xs">Forgot Password?</Button>
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                            <AlertDialogTitle>Reset Password</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                Enter your email address below and we'll send you a link to reset your password.
-                                            </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="reset-email">Email Address</Label>
-                                                <Input id="reset-email" type="email" placeholder="name@example.com" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} />
-                                            </div>
-                                            <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction onClick={handlePasswordReset}>Send Reset Link</AlertDialogAction>
-                                            </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                        </AlertDialog>
-                                    </div>
-                                    <Input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    required
-                                    />
-                                </div>
-                                <Button type="submit" className="w-full">
-                                    Sign In
-                                </Button>
+                                <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                required
+                                />
                             </div>
                         )}
+                        <Button type="submit" className="w-full">
+                            {loginMethod === 'email' ? 'Sign In' : 'Send OTP'}
+                        </Button>
                     </form>
                     
                     <div className="text-center">
-                        <Button variant="link" onClick={() => setLoginMethod(loginMethod === 'phone' ? 'email' : 'phone')}>
-                            {loginMethod === 'phone' ? 'Use Email Instead' : 'Use Phone Instead'}
+                        <Button variant="link" onClick={() => setLoginMethod(loginMethod === 'otp' ? 'email' : 'otp')}>
+                            {loginMethod === 'otp' ? 'Use Password Instead' : 'Use Magic Link (OTP) Instead'}
                         </Button>
                     </div>
                 </CardContent>
