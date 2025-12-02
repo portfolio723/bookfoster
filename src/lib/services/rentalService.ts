@@ -119,7 +119,7 @@ export const approveRental = async (rentalId: string, ownerId: string) => {
     await createNotification(rental.renter_id, 'Rental Approved', `Your rental request for "${rental.books.title}" has been approved.`);
 
     return { success: true, rental: data };
-  } catch (error)_mod
+  } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : 'Failed to approve rental' };
   }
 };
