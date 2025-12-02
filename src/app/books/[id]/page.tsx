@@ -22,6 +22,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { useCart } from '@/hooks/use-cart';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -79,130 +81,136 @@ export default function BookDetailPage() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="grid md:grid-cols-2 gap-12 items-start">
-        <div className="sticky top-24">
-          <div className="aspect-[2/3] relative rounded-lg overflow-hidden shadow-xl">
-            {mainImage && (
-              <Image
-                src={mainImage.imageUrl}
-                alt={`Cover of ${book.title}`}
-                data-ai-hint={mainImage.imageHint}
-                fill
-                className="object-cover"
-              />
-            )}
-            <Button
-              size="icon"
-              className="absolute top-4 right-4 rounded-full"
-              variant={isWishlisted ? 'destructive' : 'secondary'}
-              onClick={handleWishlistToggle}
-            >
-              <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-current' : ''}`} />
-            </Button>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <Badge>{book.category}</Badge>
-            <h1 className="text-4xl font-bold font-headline mt-2">{book.title}</h1>
-            <p className="text-xl text-muted-foreground mt-1">by {book.author}</p>
-          </div>
-
-          <p className="text-lg leading-relaxed">{book.description}</p>
-
-          <Separator />
-
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="font-semibold">Condition:</span>{' '}
-              <Badge variant="secondary">{book.condition}</Badge>
-            </div>
-            <div>
-              <span className="font-semibold">ISBN:</span>{' '}
-              {book.id.padStart(13, '9780')}
-            </div>
-          </div>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center gap-4">
-              <Avatar className="h-12 w-12">
-                {donorAvatar && (
-                  <AvatarImage
-                    src={donorAvatar.imageUrl}
-                    alt={book.donor.name}
-                    data-ai-hint={donorAvatar.imageHint}
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid md:grid-cols-2 gap-12 items-start">
+            <div className="sticky top-24">
+              <div className="aspect-[2/3] relative rounded-lg overflow-hidden shadow-xl">
+                {mainImage && (
+                  <Image
+                    src={mainImage.imageUrl}
+                    alt={`Cover of ${book.title}`}
+                    data-ai-hint={mainImage.imageHint}
+                    fill
+                    className="object-cover"
                   />
                 )}
-                <AvatarFallback>{book.donor.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm text-muted-foreground">Donated by</p>
-                <p className="font-semibold">{book.donor.name}</p>
+                <Button
+                  size="icon"
+                  className="absolute top-4 right-4 rounded-full"
+                  variant={isWishlisted ? 'destructive' : 'secondary'}
+                  onClick={handleWishlistToggle}
+                >
+                  <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-current' : ''}`} />
+                </Button>
               </div>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href={user ? '/chat' : '/login'}>
-                  <MessageSquare className="mr-2 h-4 w-4" /> Chat with{' '}
-                  {book.donor.name}
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="bg-primary/5">
-            <CardHeader>
-              <CardTitle className="font-headline">Get This Book</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div
-                className={`flex justify-between items-center p-4 border-2 rounded-lg cursor-pointer ${
-                  purchaseType === 'buy' ? 'border-primary' : ''
-                }`}
-                onClick={() => setPurchaseType('buy')}
-              >
-                <div>
-                  <h3 className="font-bold text-lg">Buy It</h3>
-                  <p className="text-sm text-muted-foreground">Own it forever.</p>
-                </div>
-                <p className="text-3xl font-bold text-primary">
-                  ₹{book.price.toFixed(2)}
-                </p>
+            <div className="space-y-6">
+              <div>
+                <Badge>{book.category}</Badge>
+                <h1 className="text-4xl font-bold font-headline mt-2">{book.title}</h1>
+                <p className="text-xl text-muted-foreground mt-1">by {book.author}</p>
               </div>
-              <div
-                className={`flex justify-between items-center p-4 border-2 rounded-lg cursor-pointer ${
-                  purchaseType === 'rent' ? 'border-primary' : ''
-                }`}
-                onClick={() => setPurchaseType('rent')}
-              >
+
+              <p className="text-lg leading-relaxed">{book.description}</p>
+
+              <Separator />
+
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <h3 className="font-bold text-lg">Rent It</h3>
-                  <p className="text-sm text-muted-foreground">For 30 days.</p>
+                  <span className="font-semibold">Condition:</span>{' '}
+                  <Badge variant="secondary">{book.condition}</Badge>
                 </div>
-                <p className="text-3xl font-bold text-primary">
-                  ₹{book.rent.toFixed(2)}
-                </p>
+                <div>
+                  <span className="font-semibold">ISBN:</span>{' '}
+                  {book.id.padStart(13, '9780')}
+                </div>
               </div>
-              <Button size="lg" className="w-full" onClick={handleAddToCart}>
-                {purchaseType === 'buy' ? (
-                  <>
-                    <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart (Buy)
-                  </>
-                ) : (
-                  <>
-                    <CalendarPlus className="mr-2 h-5 w-5" /> Add to Cart (Rent)
-                  </>
-                )}
-              </Button>
-              <p className="text-xs text-center text-muted-foreground pt-2">
-                Secure payments processed by Razorpay.
-              </p>
-            </CardContent>
-          </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <Avatar className="h-12 w-12">
+                    {donorAvatar && (
+                      <AvatarImage
+                        src={donorAvatar.imageUrl}
+                        alt={book.donor.name}
+                        data-ai-hint={donorAvatar.imageHint}
+                      />
+                    )}
+                    <AvatarFallback>{book.donor.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Donated by</p>
+                    <p className="font-semibold">{book.donor.name}</p>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href={user ? '/chat' : '/login'}>
+                      <MessageSquare className="mr-2 h-4 w-4" /> Chat with{' '}
+                      {book.donor.name}
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-primary/5">
+                <CardHeader>
+                  <CardTitle className="font-headline">Get This Book</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div
+                    className={`flex justify-between items-center p-4 border-2 rounded-lg cursor-pointer ${
+                      purchaseType === 'buy' ? 'border-primary' : ''
+                    }`}
+                    onClick={() => setPurchaseType('buy')}
+                  >
+                    <div>
+                      <h3 className="font-bold text-lg">Buy It</h3>
+                      <p className="text-sm text-muted-foreground">Own it forever.</p>
+                    </div>
+                    <p className="text-3xl font-bold text-primary">
+                      ₹{book.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <div
+                    className={`flex justify-between items-center p-4 border-2 rounded-lg cursor-pointer ${
+                      purchaseType === 'rent' ? 'border-primary' : ''
+                    }`}
+                    onClick={() => setPurchaseType('rent')}
+                  >
+                    <div>
+                      <h3 className="font-bold text-lg">Rent It</h3>
+                      <p className="text-sm text-muted-foreground">For 30 days.</p>
+                    </div>
+                    <p className="text-3xl font-bold text-primary">
+                      ₹{book.rent.toFixed(2)}
+                    </p>
+                  </div>
+                  <Button size="lg" className="w-full" onClick={handleAddToCart}>
+                    {purchaseType === 'buy' ? (
+                      <>
+                        <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart (Buy)
+                      </>
+                    ) : (
+                      <>
+                        <CalendarPlus className="mr-2 h-5 w-5" /> Add to Cart (Rent)
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground pt-2">
+                    Secure payments processed by Razorpay.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }
