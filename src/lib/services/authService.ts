@@ -63,9 +63,6 @@ export const authSignInWithOtp = async (email: string) => {
     try {
         const { data, error } = await supabase.auth.signInWithOtp({
             email,
-            options: {
-                shouldCreateUser: false, // User should already exist
-            }
         });
         if (error) throw error;
         return { success: true, data };
