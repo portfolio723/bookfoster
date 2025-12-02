@@ -100,10 +100,8 @@ function VerifyOtpComponent() {
                     </div>
                 </CardContent>
             </Card>
-        </main>
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
 
 export default function VerifyOtpPage() {

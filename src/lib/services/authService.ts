@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/supabaseClient';
-import { User, AuthError, OtpType } from '@supabase/supabase-js';
+import { User, AuthError, OtpType, Session } from '@supabase/supabase-js';
 
 // Sign Up with Password
 export const authSignUpEmailPassword = async (
@@ -32,7 +32,7 @@ export const authSignUpEmailPassword = async (
 
 
 // Sign In with Password
-export const authSignIn = async (email: string, password: string) => {
+export const authSignInEmailPassword = async (email: string, password: string) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -148,7 +148,7 @@ export const updateUserProfile = async (userId: string, updates: any) => {
 };
 
 // Verify email
-export const verifyEmail = async (token: string) => {
+export const confirmEmail = async (token: string) => {
   try {
     const { data, error } = await supabase.auth.verifyOtp({
       token_hash: token,
@@ -180,5 +180,39 @@ export const requestPasswordReset = async (email: string) => {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to send reset email',
     };
+  }
+};
+
+// Update Password
+export const updatePassword = async (newPassword: string) => {
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      message: 'Password updated successfully',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update password',
+    };
+  }
+};
+
+// Get User Session
+export const getUserSession = async (): Promise<Session | null> => {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session || null;
+  } catch (error) {
+    console.error('Error getting session:', error);
+    return null;
   }
 };

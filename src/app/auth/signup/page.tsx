@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -113,7 +114,7 @@ export default function SignUpPage() {
     if (result.success) {
       setSuccess(result.message || 'OTP sent to your email!');
       // Redirect to a verification page, passing the email along
-      router.push(`/auth/verify?email=${encodeURIComponent(email)}`);
+      router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
     } else {
       setError(result.error || 'Failed to send OTP.');
     }

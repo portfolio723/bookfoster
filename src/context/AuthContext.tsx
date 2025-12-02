@@ -2,10 +2,16 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Session, User, OtpType } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
-import { authSignIn, authSignOut, authSignUpEmailPassword, sendOtpEmail, verifyOtpEmail } from '@/lib/services/authService';
+import { 
+  authSignInEmailPassword, 
+  authSignOut, 
+  authSignUpEmailPassword, 
+  sendOtpEmail, 
+  verifyOtpEmail 
+} from '@/lib/services/authService';
 
 interface AuthContextType {
   user: User | null;
@@ -14,7 +20,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, userType: 'reader' | 'donor' | 'both') => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
   signInWithOtp: (email: string) => Promise<any>;
-  verifyOtp: (email: string, token: string) => Promise<any>;
+  verifyOtp: (email: string, token: string, type: 'email' | 'sms') => Promise<any>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<any>;
 }
@@ -45,6 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (_event === 'SIGNED_IN') {
         router.push('/');
       }
+      if (_event === 'SIGNED_OUT') {
+        router.push('/login');
+      }
     });
 
     return () => subscription?.unsubscribe();
@@ -57,9 +66,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const result = await authSignIn(email, password);
+    const result = await authSignInEmailPassword(email, password);
     if (result.error) throw new Error(result.error);
-    router.push('/');
+    // Redirect is handled by onAuthStateChange
     return result;
   };
   
@@ -72,14 +81,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifyOtp = async (email: string, token: string) => {
     const result = await verifyOtpEmail(email, token);
     if (result.error) throw new Error(result.error);
-    router.push('/');
+     // Redirect is handled by onAuthStateChange
     return result;
   };
 
   const signOut = async () => {
     const result = await authSignOut();
     if (result.error) throw new Error(result.error);
-    router.push('/');
+     // Redirect is handled by onAuthStateChange
   };
 
   const signInWithGoogle = async () => {
@@ -107,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {!loading ? children : <div>Loading...</div>}
     </AuthContext.Provider>
   );
 }
