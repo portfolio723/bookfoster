@@ -2,12 +2,11 @@
 import { supabase } from '@/lib/supabaseClient';
 import { User, AuthError, OtpType } from '@supabase/supabase-js';
 
-// Sign Up with profile creation
+// Sign Up with Password
 export const authSignUp = async (
   email: string,
   password: string,
   fullName: string,
-  userType: 'reader' | 'donor' | 'both' = 'reader'
 ) => {
   try {
     // The user's profile is created automatically by a trigger in Supabase.
@@ -17,7 +16,6 @@ export const authSignUp = async (
       options: {
         data: {
           full_name: fullName,
-          user_type: userType,
         },
       },
     });
